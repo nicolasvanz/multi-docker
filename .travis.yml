@@ -8,11 +8,15 @@ before_install:
   - docker build -t nicolasvanz/react-test -f ./client/Dockerfile.dev ./client
 
 script:
-  - docker run nicolasvanz/react-test npm test -- --coverage
+  - docker run -e CI=true nicolasvanz/react-test npm test -- --coverage
 
 after_success:
   - docker build -t nicolasvanz/multi-client ./client
   - docker build -t nicolasvanz/multi-nginx ./nginx
   - docker build -t nicolasvanz/multi-server ./server
   - docker build -t nicolasvanz/multi-worker ./worker
-  
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  - docker push nicolasvanz/multi-client
+  - docker push nicolasvanz/multi-nginx
+  - docker push nicolasvanz/multi-server
+  - docker push nicolasvanz/multi-worker
