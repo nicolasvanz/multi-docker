@@ -1,0 +1,18 @@
+language: generic
+
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t nicolasvanz/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run nicolasvanz/react-test npm test -- --coverage
+
+after_success:
+  - docker build -t nicolasvanz/multi-client ./client
+  - docker build -t nicolasvanz/multi-nginx ./nginx
+  - docker build -t nicolasvanz/multi-server ./server
+  - docker build -t nicolasvanz/multi-worker ./worker
+  
