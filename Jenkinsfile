@@ -1,5 +1,5 @@
 pipeline {
-    agent any // forces each step to set it's own agent
+    agent any
 
     stages {
         stage("Build Client") {
