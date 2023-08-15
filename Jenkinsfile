@@ -5,7 +5,6 @@ pipeline {
         stage("Build Client") {
             agent any
             steps{
-                echo "[+] Building client docker image"
                 sh "docker build -t nicolasvanz/react-test -f ./client/Dockerfile.dev ./client"
             }
         }
@@ -13,15 +12,17 @@ pipeline {
         stage("Run Client") {
             agent any
             steps {
-                echo "[+] Running client docker image"
                 sh "docker run -e CI=true nicolasvanz/react-test npm test -- --coverage"
             }
         }
 
-        stage("Deploy") {
+        stage("Build production images") {
             agent any
             steps{
-                echo "deploying"
+                sh "docker build -t nicolasvanz/multi-client ./client"
+                sh "docker build -t nicolasvanz/multi-nginx ./nginx"
+                sh "docker build -t nicolasvanz/multi-server ./server"
+                sh "docker build -t nicolasvanz/multi-worker ./worker"
             }
         }
     }
